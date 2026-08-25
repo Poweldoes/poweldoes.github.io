@@ -1,54 +1,329 @@
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <style>
-        h1 {
-            color: rgb(196, 0, 0);
-            text-align: center;
-            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-        
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faker | The Unkillable Demon King</title>
+  <style>
+    :root {
+      --t1-red: #E4002B;
+      --t1-dark-red: #8B0000;
+      --bg-black: #0B0B0C;
+      --card-bg: #141416;
+      --border-color: #2A2A2E;
+      --text-main: #EEEEEE;
+      --text-muted: #A0A0A0;
+      --gold: #FFD700;
+    }
 
-        .imgcontainer {
-            text-align: center;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        img.avatar{
-            border-radius: 10%;
-            width: 40%;
-        }
+    body {
+      background-color: var(--bg-black);
+      color: var(--text-main);
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+  /* New background logo */
+    background-image:
+    linear-gradient(rgba(11,11,12,0.92), rgba(11,11,12,0.92)),
+    url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAwmJahKeYFcEqwsMrEG2xJnn3mYARKVaZgAJEgQK4PyxsvpQG2xzWW7c&s=10');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 700px;
+    background-attachment: fixed;
+}
 
-        img.logo{
-            width: 10%;
+    header {
+      background: linear-gradient(180deg, rgb(127, 2, 25) 0%, rgba(11, 11, 12, 1) 100%);
+      border-bottom: 2px solid var(--t1-red);
+      padding: 2rem 1rem;
+      text-align: center;
+    }
 
-        }
+    .logo-title {
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #FFF;
+      text-transform: uppercase;
+    }
 
-        body {
-            background-color: #000000; 
-            color: #ffffff; 
-        }
-    </style>
+    .logo-title span {
+      color: var(--t1-red);
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .profile-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--t1-red);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .profile-card {
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+
+    .profile-img {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 6px;
+      border: 2px solid var(--border-color);
+      margin: 0 auto;
+      display: block;
+    }
+
+    .profile-info {
+      flex: 1;
+    }
+
+    .profile-info h2 {
+      font-size: 2rem;
+      color: #FFF;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-info .role {
+      color: var(--t1-red);
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .bio {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Interactive Stats & Trophy Section */
+    .section-title {
+      font-size: 1.5rem;
+      color: #FFF;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .trophy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .trophy-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .trophy-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+    }
+
+    .trophy-count {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--gold);
+    }
+
+    .trophy-name {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+
+    /* Fact Generator Feature */
+    .interactive-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .fact-display {
+      font-size: 1.1rem;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1.5rem 0;
+      color: var(--text-main);
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 4px;
+    }
+
+    .btn {
+      background-color: var(--t1-red);
+      color: #FFF;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn:hover {
+      background-color: var(--t1-dark-red);
+    }
+
+    /* Image Gallery */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .gallery-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      transition: opacity 0.2s;
+      cursor: pointer;
+    }
+
+    .gallery-img:hover {
+      opacity: 0.8;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
 </head>
 <body>
+
+  <header>
+    <div class="logo-title">T1 <span>Faker</span></div>
+    <div class="subtitle">Lee "Faker" Sang-hyeok • Mid Laner</div>
+  </header>
+
+  <div class="container">
     
-
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmHPHW47-NREnYSvhBiGmE-Z3pS0N-qolBRN4m0m3exw&s=10" class="logo" >
-
-
-    <h1>Faker</h1>
-
-    </table>
-
-
-    
-    <div class="imgcontainer">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSllNPGusF0IJYFMwN1mrOEzC9GN4reWKkrsKe5BQWaaGP9oeayi9-eP-3Q&s=10" class="avatar">
+    <!-- Profile & Bio Section -->
+    <div class="profile-card">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMGY4PcwI3YJ6QnFVdeov2CTILAGMPJfntkQX16ytUVQ&s=10" alt="Faker / Esports Setup" class="profile-img">
+      <div class="profile-info">
+        <h2>Lee Sang-hyeok (이상혁)</h2>
+        <div class="role">Mid Laner for T1</div>
+        <p class="bio">
+          Widely considered the greatest League of Legends player of all time ("The GOAT"), Faker made his professional debut with SK Telecom T1 in 2013. Known for his unrivaled mechanical skill, vast champion pool, and unmatched clutch capability, he has anchored T1's esports legacy for over a decade.
+        </p>
+      </div>
     </div>
-    
+
+    <!-- Trophy / Achievements Section -->
+    <h3 class="section-title">Major Achievements</h3>
+    <div class="trophy-grid">
+      <div class="trophy-card">
+        <div class="trophy-count">6</div>
+        <div class="trophy-name">World Championships</div>
+      </div>
+      <div class="trophy-card">
+        <div class="trophy-count">10</div>
+        <div class="trophy-name">LCK Titles</div>
+      </div>
+      <div class="trophy-card">
+        <div class="trophy-count">2</div>
+        <div class="trophy-name">MSI Titles</div>
+      </div>
+    </div>
+
+    <!-- Interactive Feature: Fact Generator -->
+    <h3 class="section-title">Faker Fun Fact Generator</h3>
+    <div class="interactive-card">
+      <p>Click below to display an interesting fact about the Unkillable Demon King!</p>
+      <div class="fact-display" id="factDisplay">Press the button below to load a fact.</div>
+      <button class="btn" onclick="generateFact()">Generate Fact</button>
+    </div>
+
+    <!-- Worlds Trophy Video -->
+<h3 class="section-title">T1 World Championship Victory</h3>
+
+<div class="interactive-card">
+  <iframe
+  width="100%"
+  height="500"
+  src="https://www.youtube.com/embed/bH1wo60fH18"
+  title="T1 Worlds Trophy Celebration"
+  frameborder="0"
+  allowfullscreen></iframe>
 
 
+  <p style="margin-top:1rem; color:var(--text-muted);">
+    T1 lifting the Summoner's Cup after winning the World Championship.
+  </p>
+</div>
 
+  </div>
 
+  <footer>
+    <p></p>
+  </footer>
 
+  <script>
+    const facts = [
+      "Faker achieved a solo kill on Ambition's Kha'Zix in his very first professional debut match in 2013.",
+      "He is famous for rarely using champion skins during pro matches, preferring the default looks.",
+      "Faker was inducted as the first member of the League of Legends Hall of Legends in 2024.",
+      "He became a part-owner of T1 Entertainment & Sports in 2020.",
+      "His signature champion play is his iconic Zed vs. Zed 1v1 play against Ryu in the 2013 OGN Summer Finals.",
+      "Faker is widely known for his extreme camera-panning speed during games to check teammates' perspectives."
+    ];
 
+    function generateFact() {
+      const display = document.getElementById('factDisplay');
+      const randomIndex = Math.floor(Math.random() * facts.length);
+      display.textContent = facts[randomIndex];
+    }
+
+    // Display initial fact on page load
+    window.onload = generateFact;
+  </script>
 
 </body>
+</html>
