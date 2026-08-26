@@ -1,329 +1,611 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Faker | The Unkillable Demon King</title>
-  <style>
-    :root {
-      --t1-red: #E4002B;
-      --t1-dark-red: #8B0000;
-      --bg-black: #0B0B0C;
-      --card-bg: #141416;
-      --border-color: #2A2A2E;
-      --text-main: #EEEEEE;
-      --text-muted: #A0A0A0;
-      --gold: #FFD700;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faker | The Unkillable Demon King</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Barlow:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #08080a;
+    --black-soft: #131215;
+    --card-bg: #16151889;
+    --card-bg-solid: #17161a;
+    --red: #e4002b;
+    --red-deep: #6e0318;
+    --red-glow: rgba(228, 0, 43, 0.35);
+    --gold: #c9a227;
+    --white: #f2f1ee;
+    --grey: #8b8a92;
+    --line: #29282e;
+    --font-display: 'Rajdhani', sans-serif;
+    --font-body: 'Barlow', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      background-color: var(--bg-black);
-      color: var(--text-main);
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.6;
-  /* New background logo */
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--red); color: #fff; }
+
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  /* ambient scanline layer */
+  .scanlines {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.018) 0px,
+      rgba(255, 255, 255, 0.018) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    mix-blend-mode: overlay;
+  }
+
+  .grain {
+    position: fixed;
+    inset: -10%;
+    pointer-events: none;
+    z-index: 49;
+    opacity: 0.05;
+    background-image: radial-gradient(circle at 20% 30%, #fff 0.5px, transparent 0.5px),
+                       radial-gradient(circle at 70% 60%, #fff 0.5px, transparent 0.5px);
+    background-size: 3px 3px, 5px 5px;
+    animation: grainShift 8s steps(6) infinite;
+  }
+
+  @keyframes grainShift {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(-6%, 4%); }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative;
+    min-height: 78vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+    padding: 4rem 1.5rem 0;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
     background-image:
-    linear-gradient(rgba(11,11,12,0.92), rgba(11,11,12,0.92)),
-    url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAwmJahKeYFcEqwsMrEG2xJnn3mYARKVaZgAJEgQK4PyxsvpQG2xzWW7c&s=10');
+      linear-gradient(180deg, rgba(8,8,10,0.55) 0%, rgba(8,8,10,0.88) 60%, var(--black) 100%),
+      radial-gradient(ellipse at 50% 30%, rgba(228,0,43,0.18), transparent 60%),
+      url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAwmJahKeYFcEqwsMrEG2xJnn3mYARKVaZgAJEgQK4PyxsvpQG2xzWW7c&s=10');
     background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 700px;
-    background-attachment: fixed;
-}
+    background-position: center 20%;
+    background-size: cover;
+    filter: saturate(0.85);
+    z-index: 0;
+  }
 
-    header {
-      background: linear-gradient(180deg, rgb(127, 2, 25) 0%, rgba(11, 11, 12, 1) 100%);
-      border-bottom: 2px solid var(--t1-red);
-      padding: 2rem 1rem;
-      text-align: center;
-    }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+  }
 
-    .logo-title {
-      font-size: 2.8rem;
-      font-weight: 900;
-      letter-spacing: 2px;
-      color: #FFF;
-      text-transform: uppercase;
-    }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
 
-    .logo-title span {
-      color: var(--t1-red);
-    }
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(3.5rem, 12vw, 8rem);
+    letter-spacing: 0.02em;
+    line-height: 0.95;
+    color: #fff;
+    text-shadow: 0 0 40px var(--red-glow);
+    text-transform: uppercase;
+  }
 
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+  .hero-title em {
+    font-style: normal;
+    color: var(--red);
+  }
 
-    .container {
-      max-width: 1000px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
+  .hero-title-sub {
+    display: block;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: clamp(1rem, 2.4vw, 1.4rem);
+    letter-spacing: 0.4em;
+    color: var(--grey);
+    margin-top: 0.75rem;
+    text-transform: none;
+  }
 
-    .profile-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-left: 4px solid var(--t1-red);
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      padding: 2rem;
-      margin-bottom: 2rem;
-    }
+  .hero-tagline {
+    margin-top: 1.75rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(0.95rem, 2vw, 1.2rem);
+    letter-spacing: 0.28em;
+    color: var(--red);
+    text-transform: uppercase;
+  }
 
-    @media (min-width: 768px) {
-      .profile-card {
-        flex-direction: row;
-        align-items: center;
-      }
-    }
+  /* broadcast lower-third ticker */
+  .hero-ticker {
+    position: relative;
+    z-index: 2;
+    margin-top: 3.5rem;
+    width: 100%;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: rgba(20, 19, 22, 0.7);
+    backdrop-filter: blur(2px);
+    overflow: hidden;
+    padding: 0.85rem 0;
+  }
 
-    .profile-img {
-      width: 100%;
-      max-width: 300px;
-      border-radius: 6px;
-      border: 2px solid var(--border-color);
-      margin: 0 auto;
-      display: block;
-    }
+  .ticker-track {
+    display: flex;
+    width: max-content;
+    gap: 2.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    color: var(--white);
+    text-transform: uppercase;
+    animation: ticker 22s linear infinite;
+  }
 
-    .profile-info {
-      flex: 1;
-    }
+  .ticker-track span.dot { color: var(--red); }
 
-    .profile-info h2 {
-      font-size: 2rem;
-      color: #FFF;
-      margin-bottom: 0.5rem;
-    }
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
 
-    .profile-info .role {
-      color: var(--t1-red);
-      font-weight: bold;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
+  /* ---------- LAYOUT ---------- */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
 
-    .bio {
-      color: var(--text-muted);
-      margin-bottom: 1.5rem;
-    }
+  section { margin-top: 4.5rem; }
+  section:first-of-type { margin-top: -4.5rem; position: relative; z-index: 3; }
 
-    /* Interactive Stats & Trophy Section */
-    .section-title {
-      font-size: 1.5rem;
-      color: #FFF;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 0.5rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.6rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 1.75rem;
+  }
 
-    .trophy-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
+  .section-title::before {
+    content: '';
+    flex: 0 0 auto;
+    width: 12px;
+    height: 12px;
+    background: var(--red);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  }
 
-    .trophy-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 1.5rem;
-      text-align: center;
-      transition: transform 0.2s, border-color 0.2s;
-    }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--line), transparent);
+  }
 
-    .trophy-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--gold);
-    }
+  /* ---------- PROFILE CARD ---------- */
+  .profile-card {
+    background: linear-gradient(180deg, var(--card-bg-solid), var(--black-soft));
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+    padding: 2.25rem;
+    box-shadow: 0 20px 50px -25px rgba(0,0,0,0.8);
+  }
 
-    .trophy-count {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: var(--gold);
-    }
+  @media (min-width: 768px) {
+    .profile-card { flex-direction: row; align-items: center; padding: 2.75rem; }
+  }
 
-    .trophy-name {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      text-transform: uppercase;
-    }
+  .profile-frame {
+    position: relative;
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto;
+  }
 
-    /* Fact Generator Feature */
-    .interactive-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 2rem;
-      text-align: center;
-      margin-bottom: 2rem;
-    }
+  .profile-frame::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 100%;
+    height: 100%;
+    background: var(--red);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
+    z-index: 0;
+  }
 
-    .fact-display {
-      font-size: 1.1rem;
-      min-height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 1.5rem 0;
-      color: var(--text-main);
-      padding: 1rem;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 4px;
-    }
+  .profile-img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    aspect-ratio: 4 / 5;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
+    border: 1px solid var(--line);
+    filter: grayscale(0.15) contrast(1.05);
+  }
 
-    .btn {
-      background-color: var(--t1-red);
-      color: #FFF;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
+  .profile-info { flex: 1; }
 
-    .btn:hover {
-      background-color: var(--t1-dark-red);
-    }
+  .profile-info h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    margin-bottom: 0.4rem;
+  }
 
-    /* Image Gallery */
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
+  .profile-info .role {
+    font-family: var(--font-mono);
+    color: var(--red);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
 
-    .gallery-img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      transition: opacity 0.2s;
-      cursor: pointer;
-    }
+  .bio { color: var(--grey); font-size: 1rem; max-width: 56ch; }
 
-    .gallery-img:hover {
-      opacity: 0.8;
-    }
+  /* ---------- TROPHIES ---------- */
+  .trophy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.1rem;
+  }
 
-    footer {
-      text-align: center;
-      padding: 2rem;
-      border-top: 1px solid var(--border-color);
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-  </style>
+  .trophy-card {
+    position: relative;
+    background: var(--card-bg-solid);
+    border: 1px solid var(--line);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
+    padding: 2rem 1.5rem 1.75rem;
+    text-align: center;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .trophy-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--gold);
+    box-shadow: 0 18px 30px -18px rgba(201,162,39,0.35);
+  }
+
+  .trophy-count {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 3rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .trophy-name {
+    margin-top: 0.6rem;
+    font-family: var(--font-mono);
+    color: var(--grey);
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- INTERACTIVE / TERMINAL CARD ---------- */
+  .interactive-card {
+    background: var(--card-bg-solid);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1rem;
+    background: var(--black-soft);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--grey);
+    letter-spacing: 0.08em;
+  }
+
+  .terminal-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--red);
+    display: inline-block;
+    box-shadow: 16px 0 0 var(--gold), 32px 0 0 var(--line);
+  }
+
+  .terminal-body { padding: 2rem; text-align: center; }
+
+  .terminal-body p.lead { color: var(--grey); margin-bottom: 1.5rem; }
+
+  .fact-display {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.75rem;
+    color: var(--white);
+    padding: 1.25rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px dashed var(--line);
+  }
+
+  .fact-display::after {
+    content: '_';
+    color: var(--red);
+    animation: blink 1s steps(1) infinite;
+    margin-left: 0.4rem;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .btn {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    padding: 0.85rem 2rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.15s;
+  }
+
+  .btn:hover { background-color: var(--red-deep); transform: translateY(-2px); }
+  .btn:active { transform: translateY(0); }
+
+  /* ---------- VIDEO / BROADCAST FRAME ---------- */
+  .video-card { padding: 2rem; background: var(--card-bg-solid); }
+
+  .broadcast-frame {
+    position: relative;
+    padding: 14px;
+    border: 1px solid var(--line);
+    background: var(--black-soft);
+  }
+
+  .broadcast-frame iframe {
+    width: 100%;
+    height: 500px;
+    display: block;
+    border: none;
+  }
+
+  .corner { position: absolute; width: 22px; height: 22px; }
+  .corner.tl { top: -1px; left: -1px; border-top: 3px solid var(--red); border-left: 3px solid var(--red); }
+  .corner.tr { top: -1px; right: -1px; border-top: 3px solid var(--red); border-right: 3px solid var(--red); }
+  .corner.bl { bottom: -1px; left: -1px; border-bottom: 3px solid var(--red); border-left: 3px solid var(--red); }
+  .corner.br { bottom: -1px; right: -1px; border-bottom: 3px solid var(--red); border-right: 3px solid var(--red); }
+
+  .caption {
+    margin-top: 1.25rem;
+    color: var(--grey);
+    font-size: 0.9rem;
+    font-family: var(--font-mono);
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    margin-top: 5rem;
+    text-align: center;
+    padding: 2.5rem 1rem 3rem;
+    border-top: 1px solid var(--line);
+    color: var(--grey);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-track, .grain, .fact-display::after { animation: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
 </head>
 <body>
 
-  <header>
-    <div class="logo-title">T1 <span>Faker</span></div>
-    <div class="subtitle">Lee "Faker" Sang-hyeok • Mid Laner</div>
-  </header>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
 
-  <div class="container">
-    
-    <!-- Profile & Bio Section -->
-    <div class="profile-card">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMGY4PcwI3YJ6QnFVdeov2CTILAGMPJfntkQX16ytUVQ&s=10" alt="Faker / Esports Setup" class="profile-img">
-      <div class="profile-info">
-        <h2>Lee Sang-hyeok (이상혁)</h2>
-        <div class="role">Mid Laner for T1</div>
-        <p class="bio">
-          Widely considered the greatest League of Legends player of all time ("The GOAT"), Faker made his professional debut with SK Telecom T1 in 2013. Known for his unrivaled mechanical skill, vast champion pool, and unmatched clutch capability, he has anchored T1's esports legacy for over a decade.
-        </p>
-      </div>
+<header class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">T1 · Mid Laner</p>
+    <h1 class="hero-title">T1 <em>Faker</em><span class="hero-title-sub">Lee "Faker" Sang-hyeok</span></h1>
+    <p class="hero-tagline">The Unkillable Demon King</p>
+  </div>
+  <div class="hero-ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>6× WORLD CHAMPION</span><span class="dot">◆</span>
+      <span>10× LCK CHAMPION</span><span class="dot">◆</span>
+      <span>2× MSI CHAMPION</span><span class="dot">◆</span>
+      <span>6× WORLD CHAMPION</span><span class="dot">◆</span>
+      <span>10× LCK CHAMPION</span><span class="dot">◆</span>
+      <span>2× MSI CHAMPION</span><span class="dot">◆</span>
     </div>
+  </div>
+</header>
 
-    <!-- Trophy / Achievements Section -->
+<div class="container">
+
+  <!-- Profile & Bio Section -->
+  <section class="profile-card" id="profile">
+    <div class="profile-frame">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMGY4PcwI3YJ6QnFVdeov2CTILAGMPJfntkQX16ytUVQ&s=10" alt="Faker / Esports Setup" class="profile-img">
+    </div>
+    <div class="profile-info">
+      <h2>Lee Sang-hyeok (이상혁)</h2>
+      <p class="role">Mid Laner for T1</p>
+      <p class="bio">
+        Widely considered the greatest League of Legends player of all time ("The GOAT"), Faker made his professional debut with SK Telecom T1 in 2013. Known for his unrivaled mechanical skill, vast champion pool, and unmatched clutch capability, he has anchored T1's esports legacy for over a decade.
+      </p>
+    </div>
+  </section>
+
+  <!-- Trophy / Achievements Section -->
+  <section>
     <h3 class="section-title">Major Achievements</h3>
     <div class="trophy-grid">
       <div class="trophy-card">
-        <div class="trophy-count">6</div>
+        <div class="trophy-count" data-target="6">0</div>
         <div class="trophy-name">World Championships</div>
       </div>
       <div class="trophy-card">
-        <div class="trophy-count">10</div>
+        <div class="trophy-count" data-target="10">0</div>
         <div class="trophy-name">LCK Titles</div>
       </div>
       <div class="trophy-card">
-        <div class="trophy-count">2</div>
+        <div class="trophy-count" data-target="2">0</div>
         <div class="trophy-name">MSI Titles</div>
       </div>
     </div>
+  </section>
 
-    <!-- Interactive Feature: Fact Generator -->
+  <!-- Interactive Feature: Fact Generator -->
+  <section>
     <h3 class="section-title">Faker Fun Fact Generator</h3>
     <div class="interactive-card">
-      <p>Click below to display an interesting fact about the Unkillable Demon King!</p>
-      <div class="fact-display" id="factDisplay">Press the button below to load a fact.</div>
-      <button class="btn" onclick="generateFact()">Generate Fact</button>
+      <div class="terminal-header"><span class="terminal-dot"></span>&nbsp;&nbsp;&nbsp;&nbsp;faker_facts.exe</div>
+      <div class="terminal-body">
+        <p class="lead">Click below to display an interesting fact about the Unkillable Demon King!</p>
+        <div class="fact-display" id="factDisplay">Press the button below to load a fact.</div>
+        <button class="btn" onclick="generateFact()">Generate Fact</button>
+      </div>
     </div>
+  </section>
 
-    <!-- Worlds Trophy Video -->
-<h3 class="section-title">T1 World Championship Victory</h3>
+  <!-- Worlds Trophy Video -->
+  <section>
+    <h3 class="section-title">T1 World Championship Victory</h3>
+    <div class="interactive-card video-card">
+      <div class="broadcast-frame">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <iframe
+          src="https://www.youtube.com/embed/bH1wo60fH18"
+          title="T1 Worlds Trophy Celebration"
+          frameborder="0"
+          allowfullscreen></iframe>
+      </div>
+      <p class="caption">T1 lifting the Summoner's Cup after winning the World Championship.</p>
+    </div>
+  </section>
 
-<div class="interactive-card">
-  <iframe
-  width="100%"
-  height="500"
-  src="https://www.youtube.com/embed/bH1wo60fH18"
-  title="T1 Worlds Trophy Celebration"
-  frameborder="0"
-  allowfullscreen></iframe>
-
-
-  <p style="margin-top:1rem; color:var(--text-muted);">
-    T1 lifting the Summoner's Cup after winning the World Championship.
-  </p>
 </div>
 
-  </div>
+<footer>
+  <p>Unofficial fan page · Made for the Unkillable Demon King</p>
+</footer>
 
-  <footer>
-    <p></p>
-  </footer>
+<script>
+  const facts = [
+    "Faker achieved a solo kill on Ambition's Kha'Zix in his very first professional debut match in 2013.",
+    "He is famous for rarely using champion skins during pro matches, preferring the default looks.",
+    "Faker was inducted as the first member of the League of Legends Hall of Legends in 2024.",
+    "He became a part-owner of T1 Entertainment & Sports in 2020.",
+    "His signature champion play is his iconic Zed vs. Zed 1v1 play against Ryu in the 2013 OGN Summer Finals.",
+    "Faker is widely known for his extreme camera-panning speed during games to check teammates' perspectives."
+  ];
 
-  <script>
-    const facts = [
-      "Faker achieved a solo kill on Ambition's Kha'Zix in his very first professional debut match in 2013.",
-      "He is famous for rarely using champion skins during pro matches, preferring the default looks.",
-      "Faker was inducted as the first member of the League of Legends Hall of Legends in 2024.",
-      "He became a part-owner of T1 Entertainment & Sports in 2020.",
-      "His signature champion play is his iconic Zed vs. Zed 1v1 play against Ryu in the 2013 OGN Summer Finals.",
-      "Faker is widely known for his extreme camera-panning speed during games to check teammates' perspectives."
-    ];
+  function generateFact() {
+    const display = document.getElementById('factDisplay');
+    const randomIndex = Math.floor(Math.random() * facts.length);
+    display.textContent = facts[randomIndex];
+  }
 
-    function generateFact() {
-      const display = document.getElementById('factDisplay');
-      const randomIndex = Math.floor(Math.random() * facts.length);
-      display.textContent = facts[randomIndex];
+  // Display initial fact on page load
+  window.onload = generateFact;
+
+  // Count-up animation for trophy stats, triggered once when scrolled into view
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function animateCount(el) {
+    const target = parseInt(el.getAttribute('data-target'), 10);
+    if (reduceMotion) {
+      el.textContent = target;
+      return;
     }
+    const duration = 900;
+    const start = performance.now();
+    function step(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(eased * target);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
 
-    // Display initial fact on page load
-    window.onload = generateFact;
-  </script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCount(entry.target);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.trophy-count').forEach(el => observer.observe(el));
+</script>
 
 </body>
 </html>
